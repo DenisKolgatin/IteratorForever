@@ -1,79 +1,46 @@
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.Random;
 
-class MyLinkedList<T> implements Iterable<T> {
-    private static class Node<T> {
-        T data;
-        Node<T> next;
+public class Randoms implements Iterable<Integer> {
+    private final Random random;
+    private final int min;
+    private final int max;
 
-        Node(T data) {
-            this.data = data;
+    public Randoms(int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("Минимальное значение не может быть больше максимального");
         }
+        this.random = new Random();
+        this.min = min;
+        this.max = max;
     }
 
-    private Node<T> head;
-    private int size = 0;
-
-    // Добавление элемента
-    public void add(T element) {
-        Node<T> newNode = new Node<>(element);
-        if (head == null) {
-            head = newNode;
-        } else {
-            Node<T> current = head;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = newNode;
-        }
-        size++;
-    }
-
-    // Получение размера
-    public int size() {
-        return size;
-    }
-
-    // Итератор
     @Override
-    public Iterator<T> iterator() {
-        return new MyListIterator();
+    public Iterator<Integer> iterator() {
+        return new RandomIterator();
     }
 
-    private class MyListIterator implements Iterator<T> {
-        private Node<T> current = head;
-        private Node<T> previous = null;
-        private Node<T> previousPrevious = null;
+    // Внутренний класс-итератор (без record — обычный класс)
+    private class RandomIterator implements Iterator<Integer> {
+
+        // Конструктор по умолчанию — ничего не делает
+        public RandomIterator() {
+        }
 
         @Override
         public boolean hasNext() {
-            return current != null;
+            return true; // бесконечная последовательность
         }
 
         @Override
-        public T next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            T data = current.data;
-            previousPrevious = previous;
-            previous = current;
-            current = current.next;
-            return data;
+        public Integer next() {
+            // Генерация числа от min до max включительно
+            return min + random.nextInt(max - min + 1);
         }
 
         @Override
         public void remove() {
-            if (previous == null) {
-                throw new IllegalStateException("next() не вызван или элемент уже удален");
-            }
-            if (previousPrevious == null) {
-                head = current;
-            } else {
-                previousPrevious.next = current;
-            }
-            previous = null;
-            size--;
+            throw new UnsupportedOperationException("remove() не поддерживается");
         }
     }
 }
