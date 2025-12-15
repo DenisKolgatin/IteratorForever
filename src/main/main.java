@@ -1,3 +1,5 @@
+package main;
+
 class Main {
     public static void main(String[] args) {
         Randoms randoms = new Randoms(90, 100);
